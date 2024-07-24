@@ -3,3 +3,5 @@ const ashwin: Employee = {
     name: "Ashwin Thapa",
     salary: 1200,
 }
+
+console.log(ashwin)
