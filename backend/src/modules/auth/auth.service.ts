@@ -15,6 +15,15 @@ import * as jwt from 'jsonwebtoken';
 export class AuthService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.userModel.findOne({ email });
+    if (user && (await bcrypt.compare(pass, user.password))) {
+      const { password, ...result } = user.toObject();
+      return result;
+    }
+    return null;
+  }
+
   async register(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.userModel.findOne({
       email: createUserDto.email,
