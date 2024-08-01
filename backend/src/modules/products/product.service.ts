@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './product.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { GetProductsQueryDto } from './product.dto';
 
 @Injectable()
 export class ProductService {
@@ -9,9 +10,9 @@ export class ProductService {
     @InjectModel('Product') private readonly productModel: Model<Product>,
   ) {}
 
-  async fetchProducts(limit: number = 10): Promise<Product[]> {
+  async fetchProducts(query: GetProductsQueryDto): Promise<Product[]> {
     const products = await this.productModel.aggregate([
-      { $sample: { size: limit } },
+      { $sample: { size: parseInt(query.limit) ?? 10 } },
     ]);
     if (!products) throw new Error('Products not found');
 
