@@ -7,8 +7,11 @@ import { signInSchema } from '@/lib/validators/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormControl, Form, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SignInForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -21,6 +24,7 @@ export default function SignInForm() {
     console.log(values);
     if (values.username === 'admin' && values.password === 'admin') {
       localStorage.setItem('isLoggedIn', 'true');
+      router.push('/app');
     }
   };
 

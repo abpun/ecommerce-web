@@ -1,5 +1,14 @@
 import { cn } from '@/lib/utils';
 
-export default function Box({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn('flex items-center justify-center', className)}>{children}</div>;
+interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export default function Box({ children, className, ...rest }: BoxProps) {
+  return (
+    <div className={cn('flex items-center justify-center', className)} {...rest}>
+      {children}
+    </div>
+  );
 }

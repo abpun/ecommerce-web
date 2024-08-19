@@ -1,6 +1,7 @@
 import Product from '@/components/card/Product';
 import Container from '@/components/common/Container';
 import Grid from '@/components/common/GridLayout';
+import Footer from '@/components/menu/Footer';
 import Navbar from '@/components/menu/Navbar';
 
 export default async function Home() {
@@ -10,8 +11,6 @@ export default async function Home() {
       throw new Error('Network response was not ok');
     }
     const products = await response.json();
-
-    console.log(products);
 
     return (
       <div>
@@ -23,6 +22,7 @@ export default async function Home() {
             ))}
           </Grid>
         </Container>
+        <Footer />
       </div>
     );
   } catch (error) {

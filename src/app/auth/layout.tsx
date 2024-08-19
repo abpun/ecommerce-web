@@ -1,3 +1,5 @@
+import Footer from '@/components/menu/Footer';
+import Navbar from '@/components/menu/Navbar';
 import { cn } from '@/lib/utils';
 
 export default function Layout({
@@ -7,9 +9,9 @@ export default function Layout({
 }>) {
   return (
     <div>
-      <div>navbar</div>
-      {children}
-      <div>footer</div>
+      <Navbar />
+      <div className="py-5">{children}</div>
+      <Footer />
     </div>
   );
 }
