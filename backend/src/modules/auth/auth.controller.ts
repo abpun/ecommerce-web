@@ -1,4 +1,11 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './auth.dto';
 import { validateSync } from 'class-validator';
@@ -27,8 +34,18 @@ export class AuthController {
 
     const errors = validateSync(createUserDto);
     if (errors.length > 0) {
-      throw new BadRequestException(
-        errors.map((err) => Object.values(err.constraints)).flat(),
+      const parsedErrors = errors.reduce((acc, err) => {
+        acc[err.property] = Object.values(err.constraints)[0];
+        return acc;
+      }, {});
+
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Validation failed',
+          errors: parsedErrors,
+        },
+        HttpStatus.BAD_REQUEST,
       );
     }
 

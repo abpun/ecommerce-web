@@ -8,7 +8,7 @@ const AuthCheck = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push('/');
+      router.push('/app');
     } else {
       router.push('/auth/signin');
     }

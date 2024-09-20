@@ -8,23 +8,44 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormControl, Form, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AUTH } from '@/constants/endpoints';
+import ApiService from '@/lib/apiService';
+import { useToast } from '@/hooks/use-toast';
+import React from 'react';
 
 export default function SignInForm() {
   const router = useRouter();
+  const { toast } = useToast();
+  const [loading, setLoading] = React.useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof signInSchema>) => {
-    console.log(values);
-    if (values.username === 'admin' && values.password === 'admin') {
-      localStorage.setItem('isLoggedIn', 'true');
-      router.push('/app');
+  const onSubmit = async (values: z.infer<typeof signInSchema>) => {
+    try {
+      setLoading(true);
+      const res = await ApiService.post(AUTH.SIGN_IN, values);
+
+      if (res?.errors) {
+        const errors = res.errors;
+        Object.keys(errors).map(key => form.setError(key as 'root', { message: errors[key] }));
+      } else {
+        toast({
+          title: 'Login success',
+          description: 'Welcome',
+          duration: 3000,
+        });
+        router.push('/app');
+      }
+    } catch (error) {
+      console.log('hello', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -33,7 +54,7 @@ export default function SignInForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
@@ -51,14 +72,14 @@ export default function SignInForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="Password" {...field} />
+                <Input placeholder="Password" type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex gap-5">
-          <Button type="submit" className="px-8">
+          <Button disabled={loading} type="submit" className="px-8">
             Login
           </Button>
           <Button className="p-0" type="button" variant="link">

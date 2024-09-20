@@ -3,9 +3,12 @@ import {
   ConflictException,
   InternalServerErrorException,
   UnauthorizedException,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { User } from '../../schemas/user.schema';
 import { CreateUserDto, LoginUserDto } from './auth.dto';
 import * as bcrypt from 'bcrypt';
@@ -15,21 +18,29 @@ import * as jwt from 'jsonwebtoken';
 export class AuthService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.userModel.findOne({ email });
-    if (user && (await bcrypt.compare(pass, user.password))) {
-      const { password, ...result } = user.toObject();
-      return result;
-    }
-    return null;
+  async validateUser(id: ObjectId): Promise<any> {
+    const user = await this.userModel.findById(id).select('-password -__v');
+    if (!user) return null;
+    return user;
   }
 
-  async register(createUserDto: CreateUserDto): Promise<User> {
+  async register(createUserDto: CreateUserDto): Promise<any> {
     const existingUser = await this.userModel.findOne({
       email: createUserDto.email,
     });
 
-    if (existingUser) throw new ConflictException('Email already exists');
+    if (existingUser) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Validation failed',
+          errors: {
+            email: 'Email already exists',
+          },
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
@@ -37,10 +48,17 @@ export class AuthService {
     const createdUser = new this.userModel({
       ...createUserDto,
       password: hashedPassword,
+      role: 'user',
     });
 
     try {
-      return await createdUser.save();
+      const user = await createdUser.save();
+      if (!user) {
+        throw new HttpException('Error', HttpStatus.OK);
+      }
+      return {
+        message: 'User registerd',
+      };
     } catch (error) {
       throw new InternalServerErrorException(
         'Error saving user to the database',
@@ -69,7 +87,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const payload = { email: user.email, sub: user._id };
+    const payload = { email: user.email, id: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });

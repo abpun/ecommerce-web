@@ -12,7 +12,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Container className="p-0 py-1 bg-black  text-white">
+      <Container className="sticky top-0 z-50 p-0 py-1 bg-black  text-white">
         <Box className="px-40 justify-end mx-auto max-w-[1600px] gap-80">
           <Box>
             <Text>Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!</Text>
