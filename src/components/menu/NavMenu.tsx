@@ -8,7 +8,7 @@ export default function NavMenu() {
     <NavigationMenu orientation="horizontal">
       <NavigationMenuList>
         <NavigationMenuItem className="list-none">
-          <Link href="/app" legacyBehavior passHref>
+          <Link href="/home" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>Home</NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

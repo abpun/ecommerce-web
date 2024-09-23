@@ -12,6 +12,7 @@ import { AUTH } from '@/constants/endpoints';
 import ApiService from '@/lib/apiService';
 import { useToast } from '@/hooks/use-toast';
 import React from 'react';
+import AuthService, { AuthData } from '@/lib/authService';
 
 export default function SignInForm() {
   const router = useRouter();
@@ -40,7 +41,13 @@ export default function SignInForm() {
           description: 'Welcome',
           duration: 3000,
         });
-        router.push('/app');
+        const data: AuthData = {
+          token: res?.access_token,
+          user: res?.user,
+          isLoggedIn: true,
+        };
+        await AuthService.login(data);
+        router.push('/home');
       }
     } catch (error) {
       console.log('hello', error);

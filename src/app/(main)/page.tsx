@@ -1,8 +1,6 @@
 import Product from '@/components/card/Product';
 import Container from '@/components/common/Container';
 import Grid from '@/components/common/GridLayout';
-import Footer from '@/components/menu/Footer';
-import Navbar from '@/components/menu/Navbar';
 import { PRODUCT } from '@/constants/endpoints';
 
 export default async function Home() {
@@ -17,15 +15,13 @@ export default async function Home() {
 
     return (
       <>
-        <Navbar />
-        <Container>
+        <Container className="mt-12">
           <Grid itemsPerRow={4}>
             {products.map((product: any) => (
               <Product key={product.id} product={product} />
             ))}
           </Grid>
         </Container>
-        <Footer />
       </>
     );
   } catch (error) {

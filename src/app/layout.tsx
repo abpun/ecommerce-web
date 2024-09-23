@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
 const fontSans = FontSans({
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.className)}>
         <main>{children}</main>
-        <Toaster />
+        <Toaster position="top-right" duration={1500} />
       </body>
     </html>
   );
