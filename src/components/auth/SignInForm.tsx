@@ -12,11 +12,11 @@ import { AUTH } from '@/constants/endpoints';
 import ApiService from '@/lib/apiService';
 import { useToast } from '@/hooks/use-toast';
 import React from 'react';
+import { toast } from 'sonner';
 import AuthService, { AuthData } from '@/lib/authService';
 
 export default function SignInForm() {
   const router = useRouter();
-  const { toast } = useToast();
   const [loading, setLoading] = React.useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
@@ -36,8 +36,7 @@ export default function SignInForm() {
         const errors = res.errors;
         Object.keys(errors).map(key => form.setError(key as 'root', { message: errors[key] }));
       } else {
-        toast({
-          title: 'Login success',
+        toast('Login success', {
           description: 'Welcome',
           duration: 3000,
         });

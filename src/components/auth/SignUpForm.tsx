@@ -11,11 +11,10 @@ import { FormControl, Form, FormField, FormItem, FormLabel, FormMessage } from '
 import Link from 'next/link';
 import ApiService from '@/lib/apiService';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export default function SignUpForm() {
   const router = useRouter();
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -33,8 +32,7 @@ export default function SignUpForm() {
         const errors = res.errors;
         Object.keys(errors).map(key => form.setError(key as 'root', { message: errors[key] }));
       } else {
-        toast({
-          title: 'User Registered',
+        toast('User Registered', {
           description: 'Please proceed to login',
           duration: 3000,
         });
