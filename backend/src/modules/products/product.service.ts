@@ -32,7 +32,7 @@ export class ProductService {
     id: string,
     projection: string[] = [],
   ): Promise<Product | null> {
-    const product = await this.productModel.findOne({ id }, projection);
+    const product = await this.productModel.findById(id, projection);
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }

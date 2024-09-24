@@ -6,14 +6,16 @@ import useCartStore from '@/lib/cartService';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { HeartIcon, ShoppingCartIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type ProductProps = {
   product?: any;
 };
 
 const ProductHead = ({ product }: ProductProps) => {
-  const [active, setActive] = useState<boolean>(false);
+  const router = useRouter();
   const cartStore = useCartStore();
+  const [active, setActive] = useState<boolean>(false);
 
   const onCartAdd = (product: any) => {
     const cartItem = {
@@ -25,6 +27,10 @@ const ProductHead = ({ product }: ProductProps) => {
 
     cartStore.addItem(cartItem);
     toast.success('Item added!');
+  };
+
+  const onProductClick = (id: string) => {
+    router.push(`/product/${id}`);
   };
 
   return (
@@ -41,7 +47,7 @@ const ProductHead = ({ product }: ProductProps) => {
           <HeartIcon size={18} />
         </Box>
       </Box>
-      <Box className="h-[250px] w-full bg-gray-100">
+      <Box onClick={() => onProductClick(product._id)} className="h-[250px] w-full bg-gray-100">
         <Image src={product.thumbnail} width={200} height={180} alt="product thumbnail" className="object-cover" />
       </Box>
       {active && (
