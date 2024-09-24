@@ -15,6 +15,8 @@ import { Product } from './product.entity';
 import { Product as ProductType } from './product.model';
 import { GetProductsQueryDto } from './product.dto';
 import { JwtAuthGuard } from 'src/services/jwt-auth.guard';
+import { HttpService } from '@nestjs/axios';
+import { AxiosResponse } from 'axios';
 
 @Controller('products')
 export class ProductsController {
@@ -28,6 +30,17 @@ export class ProductsController {
   ): Promise<Product[]> {
     console.log(req.user);
     return this.productService.fetchProducts(query);
+  }
+
+  @Get('addproduct')
+  async addProductDb() {
+    try {
+      const data = await this.productService.getFromApi();
+      this.productService.addManyProducts(data.products);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Get(':id')
