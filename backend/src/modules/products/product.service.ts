@@ -51,6 +51,19 @@ export class ProductService {
     return;
   }
 
+  async getRelatedProduct(id: string): Promise<Product[]> {
+    const product = await this.findProductById(id);
+    const relatedProducts = await this.productModel
+      .find({
+        category: product.category,
+        _id: { $ne: id },
+      })
+      .limit(20);
+    if (!relatedProducts) throw new Error('Related products not found');
+
+    return this.getRandomProducts(relatedProducts, 4);
+  }
+
   async recommendByContent(userId: string): Promise<Product[]> {
     const threshold = 0.3;
     const interactions = await this.interactionModel

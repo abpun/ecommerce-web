@@ -51,6 +51,17 @@ export class ProductsController {
     return uniqueCategories;
   };
 
+  @Get('related/:id')
+  async getRelatedProducts(@Param('id') id: string) {
+    let products: any;
+    if (id) {
+      products = await this.productService.getRelatedProduct(id);
+    }
+
+    if (!products) return { message: 'No related products' };
+    return products;
+  }
+
   @Get('recommend/:id')
   async getRecommendation(@Param('id') id: string) {
     let products: any;

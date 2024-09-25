@@ -9,6 +9,7 @@ export const PRODUCT = {
     return `/products?${queryString}`;
   },
   GET_BY_SLUG: (slug: string) => `/product/${slug}`,
+  GET_RELATED: (id: string) => `/products/related/${id}`,
   RECOMMEND: (id: string) => `/products/recommend/${id}`,
 };
 

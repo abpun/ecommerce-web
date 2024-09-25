@@ -6,9 +6,11 @@ import ApiService from '@/lib/apiService';
 import authService from '@/lib/authService';
 import { PRODUCT_USER } from '@/constants/endpoints';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
-export default function LikeButton({ product }: { product: any }) {
+export default function LikeButton({ product, className }: { product: any; className?: string }) {
   const router = useRouter();
+
   const likeProduct = async () => {
     if (authService.isAuthenticated()) {
       const uid = authService.getUser()?.id;
@@ -25,7 +27,10 @@ export default function LikeButton({ product }: { product: any }) {
   };
 
   return (
-    <Box onClick={() => likeProduct()} className="rounded-full bg-white w-8 h-8 hover:text-primary cursor-pointer">
+    <Box
+      onClick={() => likeProduct()}
+      className={cn('rounded-full bg-white w-8 h-8 hover:text-primary cursor-pointer', className)}
+    >
       <HeartIcon size={18} />
     </Box>
   );

@@ -30,6 +30,9 @@ const useCartStore = create<CartState>((set, get) => {
     return [];
   };
 
+  const initialCart = getInitialCart();
+  const initialTotal = initialCart.reduce((acc: number, item: CartItem) => acc + item.subtotal, 0);
+
   return {
     cart: getInitialCart(),
     total: 0,

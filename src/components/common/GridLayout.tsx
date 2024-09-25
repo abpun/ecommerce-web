@@ -11,7 +11,7 @@ const Grid: React.FC<GridProps> = ({ itemsPerRow, children, className, ...props 
   const gridColsClass = `grid-cols-${Math.min(Math.max(itemsPerRow, 1), 12)}`;
 
   return (
-    <div {...props} className={cn('grid gap-12 grid-cols-4', gridColsClass, className)}>
+    <div {...props} className={cn('grid gap-12 grid-cols-4 grid-cols-2', gridColsClass, className)}>
       {children}
     </div>
   );
