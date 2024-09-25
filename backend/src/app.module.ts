@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductsModule } from './modules/products/product.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from './modules/auth/auth.module';
+import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './modules/auth/auth.module';
+import { RoleModule } from './modules/role/role.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ReviewModule } from './modules/review/review.module';
+import { ProductsModule } from './modules/products/product.module';
 import { PurchaseModule } from './modules/purchases/purchase.module';
+import { UserProductModule } from './modules/user_product/user_product.module';
 
 @Module({
   imports: [
@@ -18,8 +21,11 @@ import { PurchaseModule } from './modules/purchases/purchase.module';
       inject: [ConfigService],
     }),
     AuthModule,
+    RoleModule,
+    ReviewModule,
     PurchaseModule,
     ProductsModule,
+    UserProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

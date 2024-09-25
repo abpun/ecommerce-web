@@ -1,22 +1,24 @@
 import {
   Injectable,
-  ConflictException,
-  InternalServerErrorException,
-  UnauthorizedException,
-  NotFoundException,
-  HttpException,
   HttpStatus,
+  HttpException,
+  UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { User } from '../../schemas/user.schema';
 import { CreateUserDto, LoginUserDto } from './auth.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { User } from '../users/user.interface';
+import { Role } from '../role/role.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel('User') private userModel: Model<User>,
+    @InjectModel('Role') private roleModel: Model<Role>,
+  ) {}
 
   async validateUser(id: ObjectId): Promise<any> {
     const user = await this.userModel.findById(id).select('-password -__v');
@@ -45,10 +47,12 @@ export class AuthService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
+    const role = await this.roleModel.findOne({ name: 'user' });
+
     const createdUser = new this.userModel({
       ...createUserDto,
       password: hashedPassword,
-      role: 'user',
+      role: role._id,
     });
 
     try {
@@ -60,6 +64,7 @@ export class AuthService {
         message: 'User registerd',
       };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         'Error saving user to the database',
       );

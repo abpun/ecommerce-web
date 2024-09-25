@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { HeartIcon, ShoppingCartIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import LikeButton from '../actions/LikeButton';
 
 type ProductProps = {
   product?: any;
@@ -43,9 +44,7 @@ const ProductHead = ({ product }: ProductProps) => {
         -{product.discountPercentage}%
       </Text>
       <Box className="absolute flex-col gap-4 right-4 top-4">
-        <Box className="rounded-full bg-white w-8 h-8 hover:text-primary cursor-pointer">
-          <HeartIcon size={18} />
-        </Box>
+        <LikeButton product={product} />
       </Box>
       <Box onClick={() => onProductClick(product._id)} className="h-[250px] w-full bg-gray-100">
         <Image src={product.thumbnail} width={200} height={180} alt="product thumbnail" className="object-cover" />

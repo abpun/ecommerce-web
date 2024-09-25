@@ -1,6 +1,9 @@
 import Box from '../common/BoxLayout';
 import Text from '../common/Text';
 import { StarHalfIcon, StarIcon } from 'lucide-react';
+import { BsStar } from 'react-icons/bs';
+import { BsStarHalf } from 'react-icons/bs';
+import { BsStarFill } from 'react-icons/bs';
 import ProductHead from './ProductHead';
 
 type ProductProps = {
@@ -32,19 +35,31 @@ const ProductBody = ({ product }: ProductProps) => {
           ${product.price}
         </Text>
       </Box>
-      <ProductRating />
+      <ProductRating
+        rating={product.rating}
+        totalReviews={Math.abs(product?.reviews?.length + Math.floor(Math.random() * 30)) || 0}
+      />
     </Box>
   );
 };
 
-const ProductRating = () => {
+const ProductRating = ({ rating, totalReviews }: { rating: any; totalReviews: number }) => {
+  const fullStars = Math.floor(parseFloat(rating));
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
   return (
-    <Box>
-      {Array.from({ length: 4 }, (_, index) => index).map(value => (
-        <StarIcon key={value} fill="orange" stroke="none" />
+    <Box className="gap-1">
+      {Array.from({ length: fullStars }, (_, index) => (
+        <BsStarFill key={`full-${index}`} fill="orange" stroke="none" />
       ))}
-      <StarHalfIcon fill="orange" stroke="none" />
-      <Text>(88)</Text>
+
+      {hasHalfStar && <BsStarHalf fill="orange" stroke="none" />}
+
+      {Array.from({ length: emptyStars }, (_, index) => (
+        <BsStar key={`empty-${index}`} fill="gray" stroke="none" />
+      ))}
+      <Text>({totalReviews})</Text>
     </Box>
   );
 };

@@ -1,6 +1,9 @@
 import Product from '@/components/card/Product';
 import Container from '@/components/common/Container';
 import Grid from '@/components/common/GridLayout';
+import Text from '@/components/common/Text';
+import ProductsByCategories from '@/components/sections/ProductsByCategories';
+import RecommendedProducts from '@/components/sections/RecommendedProducts';
 import { PRODUCT } from '@/constants/endpoints';
 
 export default async function Home() {
@@ -9,14 +12,19 @@ export default async function Home() {
       limit: 10,
     };
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${PRODUCT.GET(query)}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: 'no-store',
+    });
     if (!response.ok) throw new Error('Network response was not ok');
     const products = await response.json();
 
     return (
       <>
         <Container className="mt-12">
-          <Grid itemsPerRow={4}>
+          <RecommendedProducts />
+          <ProductsByCategories />
+          <Text className="text-2xl font-semibold">Our Products:</Text>
+          <Grid itemsPerRow={4} className="mt-4">
             {products.map((product: any) => (
               <Product key={product.id} product={product} />
             ))}

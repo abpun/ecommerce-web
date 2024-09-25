@@ -9,6 +9,11 @@ export const PRODUCT = {
     return `/products?${queryString}`;
   },
   GET_BY_SLUG: (slug: string) => `/product/${slug}`,
+  RECOMMEND: (id: string) => `/products/recommend/${id}`,
+};
+
+export const PRODUCT_USER = {
+  ADD_LIKE: '/user_product/add',
 };
 
 export const AUTH = {
