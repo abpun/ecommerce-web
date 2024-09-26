@@ -21,3 +21,13 @@ export const AUTH = {
   SIGN_UP: '/auth/signup',
   SIGN_IN: '/auth/signin',
 };
+
+export const ORDER = {
+  CREATE: '/orders',
+  UPDATE: (id: string) => `/orders/${id}`,
+};
+
+export const PAYMENT = {
+  CREATE: '/payment',
+  UPDATE: (id: string) => `/payment/${id}`,
+};

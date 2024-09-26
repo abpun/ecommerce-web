@@ -19,9 +19,12 @@ export class OrderService {
       return acc + parseInt((item.price * item.quantity * 100).toFixed(0));
     }, 0);
 
+    const orderName = `ECOM_${Date.now()}`;
+
     return await this.orderModel.create({
       ...data,
       total,
+      order_name: orderName,
       ordered_items: orders,
     });
   }

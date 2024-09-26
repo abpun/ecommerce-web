@@ -1,10 +1,10 @@
-import Product from '@/components/card/Product';
-import Container from '@/components/common/Container';
-import Grid from '@/components/common/GridLayout';
 import Text from '@/components/common/Text';
+import Product from '@/components/card/Product';
+import { PRODUCT } from '@/constants/endpoints';
+import Grid from '@/components/common/GridLayout';
+import Container from '@/components/common/Container';
 import ProductsByCategories from '@/components/sections/ProductsByCategories';
 import RecommendedProducts from '@/components/sections/RecommendedProducts';
-import { PRODUCT } from '@/constants/endpoints';
 
 export default async function Home() {
   try {
@@ -15,6 +15,7 @@ export default async function Home() {
     const response = await fetch(url, {
       cache: 'no-store',
     });
+
     if (!response.ok) throw new Error('Network response was not ok');
     const products = await response.json();
 

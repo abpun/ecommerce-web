@@ -47,7 +47,7 @@ export default function CartCheckout({ form }: any) {
       </Box>
       <Separator className="my-3 h-[1px] w-full bg-gray-300" />
       <Box className="justify-between w-full">
-        <Text className="font-semibold">Subtotal:</Text>
+        <Text className="font-semibold">Total:</Text>
         <Text>Rs. {cartStore.total}</Text>
       </Box>
 
@@ -81,7 +81,7 @@ const Item = ({ item }: { item: any }) => {
         <Image src={item.thumbnail} alt="product thumbnail" width={30} height={10} className="object-fill" />
         <Text className="text-ellipsis  whitespace-nowrap">{item.name}</Text>
       </Box>
-      <Text className="text-center">Rs. {item.price.toFixed(2) * 100}</Text>
+      <Text className="text-center">Rs. {(item.price * 100).toFixed(0)}</Text>
     </Box>
   );
 };

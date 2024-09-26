@@ -1,7 +1,8 @@
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink } from '@radix-ui/react-navigation-menu';
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+import SignupBtn from '../actions/SignupBtn';
 import { NavigationMenuList, navigationMenuTriggerStyle } from '../ui/navigation-menu';
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink } from '@radix-ui/react-navigation-menu';
 
 export default function NavMenu() {
   return (
@@ -25,11 +26,7 @@ export default function NavMenu() {
           </Link>
         </NavigationMenuItem>
 
-        <NavigationMenuItem className="list-none">
-          <Link href="/auth/signup" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>Sign Up</NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        <SignupBtn />
       </NavigationMenuList>
     </NavigationMenu>
   );

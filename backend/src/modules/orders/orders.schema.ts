@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 interface OrderedItem {
   productId: string;
@@ -14,11 +14,15 @@ export interface Order extends Document {
   total: number;
   payment_method: string;
   status: string;
+  order_name: string;
+  userId: string;
 }
 
 export const OrderSchema = new Schema(
   {
     name: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    order_name: { type: String, required: true },
     address: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },

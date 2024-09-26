@@ -14,6 +14,8 @@ import { CartItem as CartItemProps } from '@/lib/cartService';
 import { checkoutSchema } from '@/lib/validators/checkoutSchema';
 import { toast } from 'sonner';
 import ApiService from '@/lib/apiService';
+import authService from '@/lib/authService';
+import { PAYMENT } from '@/constants/endpoints';
 
 export default function page() {
   const cartStore = useCartStore();
@@ -35,6 +37,26 @@ export default function page() {
     setCart(cartData);
   }, [cartStore.cart]);
 
+  const createKhaltiPayload = (order: any) => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || null;
+    if (!baseUrl) {
+      throw new Error('Base URL is not defined');
+    }
+
+    return {
+      customer_info: {
+        name: order.name,
+        email: order.email,
+        phone: order.phone,
+      },
+      purchase_order_id: order._id,
+      amount: order.total * 100,
+      purchase_order_name: order.order_name,
+      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment`,
+      website_url: process.env.NEXT_PUBLIC_BASE_URL,
+    };
+  };
+
   const onSubmit = async (data: any) => {
     const cartItems = cart.map(item => ({
       productId: item.id,
@@ -45,16 +67,44 @@ export default function page() {
     if (!cartItems || cartItems.length === 0) {
       return toast.error('Please add items in the cart');
     }
+
+    if (!authService.isAuthenticated()) {
+      return toast.error('Please login to continue');
+    }
+
     data.cartItems = cartItems;
+    data.userId = authService.getUser()?.id;
 
     try {
       const res = await ApiService.post('/orders', data);
       if (res.status === 201) {
         toast.success('Order placed successfully');
         if (data.payment_method === 'bank') {
-          console.log(res);
+          const payload = createKhaltiPayload(res.order);
+          const khaltiUrl = process.env.NEXT_PUBLIC_KHALTI_URL || null;
+          if (!khaltiUrl) throw new Error('Khalti URL is not defined');
+
+          const khaltiRes = await fetch(khaltiUrl, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `key live_secret_key_68791341fdd94846a146f0457ff7b455`,
+            },
+          });
+          if (!khaltiRes.ok) throw new Error('Network response was not ok');
+          const khalti_res = await khaltiRes.json();
+
+          const paymentData = {
+            orderId: res.order._id,
+            amount: res.order.total,
+            userId: res.order.userId,
+            pidx: khalti_res.pidx,
+          };
+          const paymentRes = await ApiService.post(PAYMENT.CREATE, paymentData);
+          if (paymentRes.status !== 201) throw new Error('Error create payment');
+          window.location.href = khalti_res.payment_url;
         }
-        return;
         cartStore.clearCart();
         cartStore.calculateTotal();
       }
