@@ -20,6 +20,11 @@ export default function Page({ params }: { params: { id: string } }) {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
 
+  const discountedPrice = React.useMemo(() => {
+    if (!product) return '0';
+    return (product.price - product.price * (product.discountPercentage / 100)).toFixed(2);
+  }, [product]);
+
   React.useEffect(() => {
     const fetchDataAndPostInteraction = async () => {
       try {
@@ -72,7 +77,7 @@ export default function Page({ params }: { params: { id: string } }) {
               {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
             </Text>
           </Box>
-          <Text className="text-3xl">${product.price}</Text>
+          <Text className="text-3xl">Rs. {parseFloat(discountedPrice) * 100}</Text>
           <Text className="mt-5">{product.description}</Text>
         </div>
         <ActionButtons product={product} />

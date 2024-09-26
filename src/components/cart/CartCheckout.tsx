@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Text from '../common/Text';
 import Box from '../common/BoxLayout';
 import useCartStore from '@/lib/cartService';
-import EsewaLogo from '@/assets/images/esewa.png';
+import KhaltiLogo from '@/assets/images/khalti.png';
 
 import { Button } from '../ui/button';
 import { Separator } from '@radix-ui/react-separator';
@@ -38,7 +38,7 @@ export default function CartCheckout({ form }: any) {
       )}
       <Box className="justify-between w-full mt-8">
         <Text className="font-semibold">Subtotal:</Text>
-        <Text>${cartStore.total.toFixed(2)}</Text>
+        <Text>Rs {cartStore.total}</Text>
       </Box>
       <Separator className="my-3 h-[1px] w-full bg-gray-300" />
       <Box className="justify-between w-full">
@@ -48,7 +48,7 @@ export default function CartCheckout({ form }: any) {
       <Separator className="my-3 h-[1px] w-full bg-gray-300" />
       <Box className="justify-between w-full">
         <Text className="font-semibold">Subtotal:</Text>
-        <Text>${cartStore.total.toFixed(2)}</Text>
+        <Text>Rs. {cartStore.total}</Text>
       </Box>
 
       <div className="flex flex-col items-start gap-4 mt-8">
@@ -57,7 +57,9 @@ export default function CartCheckout({ form }: any) {
             <input type="radio" {...form.register('payment_method')} value="bank" className="size-5 cursor-pointer" />
             <Text>Wallet</Text>
           </div>
-          <Image src={EsewaLogo} alt="esewa logo" width={50} height={10} className="object-fill" />
+          <div>
+            <Image src={KhaltiLogo} alt="esewa logo" width={60} height={10} className="object-fill" />
+          </div>
         </div>
         <div className="flex gap-3 items-center">
           <input type="radio" {...form.register('payment_method')} value="cash" className="size-5 cursor-pointer" />
@@ -79,7 +81,7 @@ const Item = ({ item }: { item: any }) => {
         <Image src={item.thumbnail} alt="product thumbnail" width={30} height={10} className="object-fill" />
         <Text className="text-ellipsis  whitespace-nowrap">{item.name}</Text>
       </Box>
-      <Text className="text-center">${item.price.toFixed(2)}</Text>
+      <Text className="text-center">Rs. {item.price.toFixed(2) * 100}</Text>
     </Box>
   );
 };

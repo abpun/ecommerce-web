@@ -70,9 +70,9 @@ const CartItem = ({ item, deleteItem }: { item: any; deleteItem: (id: any) => vo
         <Image src={item.thumbnail} alt="product thumbnail" width={60} height={10} className="object-fill" />
         <Text className="text-ellipsis  whitespace-nowrap">{item.name}</Text>
       </Box>
-      <Text className="text-center">${item.price.toFixed(2)}</Text>
+      <Text className="text-center">Rs. {(item.price * 100).toFixed(0)}</Text>
       <Text className="text-center">{item.quantity}</Text>
-      <Text className="text-right">${item.subtotal}</Text>
+      <Text className="text-right">Rs. {item.subtotal.toFixed(0)}</Text>
     </Grid>
   );
 };

@@ -41,14 +41,20 @@ export default function page() {
       quantity: item.quantity,
       price: item.price,
     }));
+
     if (!cartItems || cartItems.length === 0) {
       return toast.error('Please add items in the cart');
     }
     data.cartItems = cartItems;
+
     try {
       const res = await ApiService.post('/orders', data);
       if (res.status === 201) {
         toast.success('Order placed successfully');
+        if (data.payment_method === 'bank') {
+          console.log(res);
+        }
+        return;
         cartStore.clearCart();
         cartStore.calculateTotal();
       }

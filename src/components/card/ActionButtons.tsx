@@ -5,8 +5,14 @@ import { Button } from '../ui/button';
 import { useForm } from 'react-hook-form';
 import { MinusIcon, PlusIcon } from 'lucide-react';
 import LikeButton from '../actions/LikeButton';
+import { useRouter } from 'next/navigation';
+import useCartStore from '@/lib/cartService';
+import { calculateDiscountedPrice } from '@/lib/utils';
 
 export default function ActionButtons({ product }: any) {
+  const router = useRouter();
+  const cartStore = useCartStore();
+
   const form = useForm({
     defaultValues: {
       quantity: 1,
@@ -27,8 +33,19 @@ export default function ActionButtons({ product }: any) {
     }
   };
 
+  const onSubmit = (data: any) => {
+    cartStore.addItem({
+      id: product._id,
+      thumbnail: product.thumbnail,
+      name: product.title,
+      price: calculateDiscountedPrice(product.price, product.discountPercentage),
+      quantity: data.quantity,
+    });
+    router.push(`/checkout`);
+  };
+
   return (
-    <form className="flex gap-4 mt-5">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 mt-5">
       <div className="flex">
         <Button size="sm" type="button" variant="outline" className="rounded-r-none" onClick={handleDecrement}>
           <MinusIcon size={16} />
@@ -42,7 +59,7 @@ export default function ActionButtons({ product }: any) {
         </Button>
       </div>
 
-      <Button className="w-40" size="sm">
+      <Button type="submit" className="w-40" size="sm">
         Buy Now
       </Button>
 

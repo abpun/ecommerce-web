@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { HeartIcon, ShoppingCartIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import LikeButton from '../actions/LikeButton';
+import { calculateDiscountedPrice } from '@/lib/utils';
 
 type ProductProps = {
   product?: any;
@@ -20,9 +21,10 @@ const ProductHead = ({ product }: ProductProps) => {
 
   const onCartAdd = (product: any) => {
     const cartItem = {
+      quantity: 1,
       id: product._id,
       name: product.title,
-      price: product.price,
+      price: calculateDiscountedPrice(product.price, product.discountPercentage),
       thumbnail: product.thumbnail,
     };
 

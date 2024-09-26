@@ -7,7 +7,7 @@ import CartDetails from '@/components/cart/CartDetails';
 
 export default async function Home() {
   return (
-    <Container className="mx-auto mt-12 max-w-[1600px]">
+    <Container className="mx-auto mt-2">
       <div className="">
         <CustomBreadcrumb />
       </div>

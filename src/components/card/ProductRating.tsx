@@ -16,7 +16,7 @@ export const ProductRating = ({
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   return (
-    <Box className="gap-1">
+    <Box className="gap-1 justify-start">
       {Array.from({ length: fullStars }, (_, index) => (
         <BsStarFill key={`full-${index}`} fill="orange" stroke="none" />
       ))}

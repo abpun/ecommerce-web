@@ -14,7 +14,7 @@ export interface CartItem {
 interface CartState {
   cart: CartItem[];
   total: number;
-  addItem: (item: Omit<CartItem, 'quantity' | 'subtotal'>) => void;
+  addItem: (item: Omit<CartItem, 'subtotal'>) => void;
   removeItem: (itemId: string) => void;
   updateItemQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -30,28 +30,26 @@ const useCartStore = create<CartState>((set, get) => {
     return [];
   };
 
-  const initialCart = getInitialCart();
-  const initialTotal = initialCart.reduce((acc: number, item: CartItem) => acc + item.subtotal, 0);
-
   return {
     cart: getInitialCart(),
     total: 0,
 
-    addItem: (item: Omit<CartItem, 'quantity' | 'subtotal'>) => {
+    addItem: (item: Omit<CartItem, 'subtotal'>) => {
       const cart = get().cart;
       const existingItemIndex = cart.findIndex((cartItem: CartItem) => cartItem.id === item.id);
 
       if (existingItemIndex > -1) {
         const updatedCart = [...cart];
-        updatedCart[existingItemIndex].quantity += 1;
-        updatedCart[existingItemIndex].subtotal =
-          updatedCart[existingItemIndex].quantity * updatedCart[existingItemIndex].price;
+        updatedCart[existingItemIndex].quantity += item?.quantity ?? 1;
+        updatedCart[existingItemIndex].subtotal = parseInt(
+          (updatedCart[existingItemIndex].quantity * updatedCart[existingItemIndex].price * 100).toFixed(0)
+        );
         set({ cart: updatedCart });
       } else {
         const newItem: CartItem = {
           ...item,
           quantity: 1,
-          subtotal: item.price * 1,
+          subtotal: parseInt((item.price * 1 * 100).toFixed(0)),
         };
         set({ cart: [...cart, newItem] });
       }
@@ -74,7 +72,7 @@ const useCartStore = create<CartState>((set, get) => {
       if (itemIndex > -1) {
         const updatedCart = [...cart];
         updatedCart[itemIndex].quantity = quantity;
-        updatedCart[itemIndex].subtotal = updatedCart[itemIndex].price * quantity;
+        updatedCart[itemIndex].subtotal = parseInt((updatedCart[itemIndex].price * quantity * 100).toFixed(0));
         set({ cart: updatedCart });
         localStorage.setItem('ecom_cart', JSON.stringify(updatedCart));
         get().calculateTotal();

@@ -17,23 +17,23 @@ export default function Product({ product }: ProductProps) {
 }
 
 const ProductBody = ({ product }: ProductProps) => {
-  const discountedPrice = (product.price - product.price * (product.discountPercentage / 100)).toFixed(2);
+  const discountedPrice = (product.price - product.price * (product.discountPercentage / 100)) * 100;
   const totalRating = Math.abs(product?.reviews?.length + Math.floor(Math.random() * 30)) || 0;
 
   return (
-    <Box className="flex-col mt-2 gap-2 items-start">
-      <Text type="h4" className="font-semibold text-xl overflow-hidden w-[90%] text-ellipsis whitespace-nowrap">
+    <div className="space-y-2 mt-2 w-full">
+      <Text type="h4" className="font-semibold text-xl overflow-hidden w-[80%] text-ellipsis whitespace-nowrap">
         {product.title ?? 'title'}
       </Text>
-      <Box className="gap-4 font-semibold text-xl">
-        <Text type="p" className="text-primary">
-          ${discountedPrice}
+      <Box className="gap-4 text-md justify-start">
+        <Text type="p" className="text-primary font-semibold">
+          Rs. {discountedPrice.toFixed(0)}
         </Text>
         <Text type="span" className="line-through text-gray-400">
-          ${product.price}
+          Rs. {(product.price * 100).toFixed(0)}
         </Text>
       </Box>
       <ProductRating rating={product.rating} totalReviews={totalRating} />
-    </Box>
+    </div>
   );
 };

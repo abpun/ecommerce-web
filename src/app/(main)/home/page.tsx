@@ -19,18 +19,16 @@ export default async function Home() {
     const products = await response.json();
 
     return (
-      <>
-        <Container className="mt-12">
-          <RecommendedProducts />
-          <ProductsByCategories />
-          <Text className="text-2xl font-semibold">Our Products:</Text>
-          <Grid itemsPerRow={4} className="mt-4">
-            {products.map((product: any) => (
-              <Product key={product.id} product={product} />
-            ))}
-          </Grid>
-        </Container>
-      </>
+      <Container className="mt-2">
+        <RecommendedProducts />
+        <ProductsByCategories />
+        <Text className="text-2xl font-semibold">Our Products:</Text>
+        <Grid itemsPerRow={4} className="mt-4">
+          {products.map((product: any) => (
+            <Product key={product.id} product={product} />
+          ))}
+        </Grid>
+      </Container>
     );
   } catch (error) {
     console.error('Failed to fetch products:', error);

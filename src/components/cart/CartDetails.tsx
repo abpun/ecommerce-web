@@ -24,7 +24,7 @@ export default function CartDetails() {
         <Separator className="my-4" />
         <Box className="justify-between w-full">
           <Text className="font-semibold">Subtotal:</Text>
-          <Text>${cartStore.total.toFixed(2)}</Text>
+          <Text>Rs. {cartStore.total.toFixed(0)}</Text>
         </Box>
 
         <Separator className="my-4" />

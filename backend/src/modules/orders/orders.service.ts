@@ -16,7 +16,7 @@ export class OrderService {
     }));
 
     const total = data.cartItems.reduce((acc: number, item: any) => {
-      return acc + item.price * item.quantity;
+      return acc + parseInt((item.price * item.quantity * 100).toFixed(0));
     }, 0);
 
     return await this.orderModel.create({
