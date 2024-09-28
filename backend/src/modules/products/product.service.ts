@@ -29,6 +29,33 @@ export class ProductService {
     return products;
   }
 
+  async fetchProductsByPagination(query: any): Promise<any> {
+    const { limit, page } = query;
+
+    const currentPage = parseInt(page) || 1;
+    const perPage = parseInt(limit) || 10;
+
+    const totalDocuments = await this.productModel.countDocuments();
+    const totalPages = Math.ceil(totalDocuments / perPage);
+
+    const products = await this.productModel
+      .find({})
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+
+    if (!products || products.length === 0) {
+      throw new NotFoundException('Products not found');
+    }
+
+    return {
+      currentPage,
+      totalPages,
+      totalDocuments,
+      limit: perPage,
+      data: products,
+    };
+  }
+
   async searchProducts(query: any): Promise<Product[]> {
     const { q: searchText } = query;
     const products = await this.productModel.aggregate([

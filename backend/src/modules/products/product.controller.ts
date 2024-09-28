@@ -26,6 +26,11 @@ export class ProductsController {
     return this.productService.fetchProducts(query);
   }
 
+  @Get('pagination')
+  async getProductsByPagination(@Query() query: any) {
+    return this.productService.fetchProductsByPagination(query);
+  }
+
   @Get('category/:name')
   async getProductsByCategory(@Param('name') category: string) {
     if (!category) throw new NotFoundException('Category not found');

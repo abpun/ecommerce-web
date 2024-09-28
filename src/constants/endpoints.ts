@@ -8,6 +8,13 @@ export const PRODUCT = {
     const queryString = objectToQueryString(query);
     return `/products?${queryString}`;
   },
+  GET_PAGINATION: (query?: Record<string, any>) => {
+    if (!query || Object.keys(query).length === 0) {
+      return '/products/pagination';
+    }
+    const queryString = objectToQueryString(query);
+    return `/products/pagination?${queryString}`;
+  },
   GET_BY_SLUG: (slug: string) => `/product/${slug}`,
   GET_RELATED: (id: string) => `/products/related/${id}`,
   RECOMMEND: (id: string) => `/products/recommend/${id}`,
@@ -26,6 +33,13 @@ export const AUTH = {
 
 export const ORDER = {
   CREATE: '/orders',
+  GET_PAGINATION: (query?: Record<string, any>) => {
+    if (!query || Object.keys(query).length === 0) {
+      return '/orders/pagination';
+    }
+    const queryString = objectToQueryString(query);
+    return `/orders/pagination?${queryString}`;
+  },
   UPDATE: (id: string) => `/orders/${id}`,
 };
 

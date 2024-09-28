@@ -28,8 +28,10 @@ const UsersList: React.FC = () => {
                 <td className="border px-4 py-2">{user.email}</td>
                 <td className="border px-4 py-2">{user.role}</td>
                 <td className="border px-4 py-2">
-                  <button className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2">Edit</button>
-                  <button className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Delete</button>
+                  <button className="bg-yellow-500 text-white px-2 pb-0.5 rounded hover:bg-yellow-600 mr-2">
+                    Edit
+                  </button>
+                  <button className="bg-red-500 text-white px-2 pb-0.5 rounded hover:bg-red-600">Delete</button>
                 </td>
               </tr>
             ))}

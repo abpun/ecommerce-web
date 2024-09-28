@@ -1,9 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { OrderService } from './orders.service';
 
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
+
+  @Get('pagination')
+  async getOrdersByPagination(@Body() query: any) {
+    return this.orderService.getOrdersByPagination(query);
+  }
 
   @Post('')
   async createOrder(@Body() data: any) {

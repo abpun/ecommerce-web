@@ -76,7 +76,7 @@ export class AuthService {
 
     let user: User | null;
     try {
-      user = await this.userModel.findOne({ email }).exec();
+      user = await this.userModel.findOne({ email }).populate('role').exec();
     } catch (error) {
       throw new InternalServerErrorException(
         'Error checking for existing user',
@@ -92,7 +92,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const payload = { id: user._id, email: user.email, name: user.name };
+    const payload = {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role?.name,
+    };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });

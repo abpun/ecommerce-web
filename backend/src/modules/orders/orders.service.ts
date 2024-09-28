@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model, ObjectId } from 'mongoose';
 import { Order } from './orders.schema';
 
@@ -8,6 +8,34 @@ export class OrderService {
   constructor(@InjectModel('Order') private orderModel: Model<Order>) {}
 
   async getOrderById(id: ObjectId) {}
+
+  async getOrdersByPagination(query: any) {
+    const { limit, page } = query;
+
+    const currentPage = parseInt(page) || 1;
+    const perPage = parseInt(limit) || 10;
+
+    const totalDocuments = await this.orderModel.countDocuments();
+    const totalPages = Math.ceil(totalDocuments / perPage);
+
+    const orders = await this.orderModel
+      .find({})
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage)
+      .populate('userId');
+
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException('Orders not found');
+    }
+
+    return {
+      currentPage,
+      totalPages,
+      totalDocuments,
+      limit: perPage,
+      data: orders,
+    };
+  }
 
   async createOrder(data: any) {
     const orders = data.cartItems.map((item: any) => ({

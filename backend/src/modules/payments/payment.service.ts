@@ -40,9 +40,9 @@ export class PaymentService {
       throw new Error('Payment not updated');
     }
 
-    const updatedOrder = await this.orderModel.findOneAndUpdate(
+    await this.orderModel.findOneAndUpdate(
       { _id: id },
-      { status: 'completed' },
+      { payment_status: 'completed' },
       {
         new: true,
       },
