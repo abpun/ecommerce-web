@@ -39,7 +39,7 @@ export default function RelatedProducts({ id }: { id: string }) {
         <div className="h-8 w-3 bg-primary rounded-sm"></div>
         <Text className="font-semibold text-primary">Related Item</Text>
       </Box>
-      <Grid itemsPerRow={4} className="mt-4">
+      <Grid itemsPerRow={4} className="mt-4 mb-8">
         {products.map((product: any) => (
           <Product key={product.id} product={product} />
         ))}

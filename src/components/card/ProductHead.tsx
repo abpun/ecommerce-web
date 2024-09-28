@@ -40,7 +40,7 @@ const ProductHead = ({ product }: ProductProps) => {
     <Box
       onMouseOver={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
-      className="relative w-full rounded-md"
+      className="relative w-full rounded-md cursor-pointer"
     >
       <Text type="span" className="absolute left-4 top-4 bg-primary px-2 py-1 text-white rounded-sm">
         -{product.discountPercentage}%

@@ -26,6 +26,19 @@ export class ProductsController {
     return this.productService.fetchProducts(query);
   }
 
+  @Get('category/:name')
+  async getProductsByCategory(@Param('name') category: string) {
+    if (!category) throw new NotFoundException('Category not found');
+    const products = this.productService.getByCategories(category);
+    if (!products) throw new NotFoundException('Category not found');
+    return products;
+  }
+
+  @Get('search')
+  async searchProducts(@Query() query: object) {
+    return this.productService.searchProducts(query);
+  }
+
   @Get('addproduct')
   async addProductDb() {
     try {

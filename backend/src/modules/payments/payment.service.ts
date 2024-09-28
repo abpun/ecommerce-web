@@ -5,7 +5,10 @@ import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class PaymentService {
-  constructor(@InjectModel('Payment') private paymentModel: Model<Payment>) {}
+  constructor(
+    @InjectModel('Payment') private paymentModel: Model<Payment>,
+    @InjectModel('Order') private orderModel: Model<any>,
+  ) {}
 
   async getRoleById(id: ObjectId) {}
 
@@ -36,6 +39,14 @@ export class PaymentService {
     if (!updated) {
       throw new Error('Payment not updated');
     }
+
+    const updatedOrder = await this.orderModel.findOneAndUpdate(
+      { _id: id },
+      { status: 'completed' },
+      {
+        new: true,
+      },
+    );
 
     return updated;
   }

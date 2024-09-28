@@ -11,6 +11,8 @@ export const PRODUCT = {
   GET_BY_SLUG: (slug: string) => `/product/${slug}`,
   GET_RELATED: (id: string) => `/products/related/${id}`,
   RECOMMEND: (id: string) => `/products/recommend/${id}`,
+  SEARCH: (search: string) => `/products/search?q=${search}`,
+  GET_BY_CATEGORY: (category: string) => `/products/category/${category}`,
 };
 
 export const PRODUCT_USER = {

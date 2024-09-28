@@ -7,8 +7,9 @@ import Box from '@/components/common/BoxLayout';
 import Container from '@/components/common/Container';
 import CustomBreadcrumb from '@/components/common/Breadcrumb';
 
-import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { usePathname, useRouter } from 'next/navigation';
 
 const MENUS = [
   {
@@ -32,10 +33,16 @@ export default function Layout({
 }>) {
   const [isMounted, setIsMounted] = React.useState(false);
   const params = usePathname();
+  const router = useRouter();
 
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const handleLogout = () => {
+    authService.logout();
+    router.push('/');
+  };
 
   if (!isMounted) return <div className=""></div>;
 
@@ -50,8 +57,8 @@ export default function Layout({
           </Box>
         </Box>
 
-        <Box className="w-full justify-start h-[40vh] items-start gap-12 mt-12">
-          <Box className="w-1/3 justify-start">
+        <Box className="w-full justify-start h-[40vh] items-start gap-12 mt-12 px-20">
+          <Box className="w-[200px] justify-start">
             <ul className="space-y-8">
               {MENUS.map(menu => (
                 <li key={menu.name} className="font-semibold">
@@ -63,9 +70,12 @@ export default function Layout({
                   </Link>
                 </li>
               ))}
+              <Button type="button" className="w-24" onClick={handleLogout}>
+                Logout
+              </Button>
             </ul>
           </Box>
-          <div className="w-2/3">{children}</div>
+          <div className="w-3/4">{children}</div>
         </Box>
       </Container>
     </>

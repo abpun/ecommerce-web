@@ -7,6 +7,14 @@ import { CATEGORIES } from '@/constants/categories';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import '@/assets/css/splide.css';
+import { IconType } from 'react-icons/lib';
+import { useRouter } from 'next/navigation';
+
+type CategoryType = {
+  icon: IconType;
+  label: string;
+  category: string;
+};
 
 export default function ProductsByCategories() {
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
@@ -75,7 +83,7 @@ export default function ProductsByCategories() {
       </Box>
 
       <div ref={scrollRef} className="flex mt-5 overflow-x-auto gap-5 scrollbar-hidden">
-        {CATEGORIES.map((category, index) => (
+        {CATEGORIES.map((category: CategoryType, index) => (
           <Category key={index} category={category} />
         ))}
       </div>
@@ -85,6 +93,17 @@ export default function ProductsByCategories() {
   );
 }
 
-const Category = ({ category }: { category: string }) => {
-  return <div className="min-w-32 h-32 border">{category}</div>;
+const Category = ({ category }: { category: CategoryType }) => {
+  const router = useRouter();
+  return (
+    <Box
+      onClick={() => router.push(`/product/category/${category.category}`)}
+      className="min-w-32 h-32 border flex-col gap-4 cursor-pointer"
+    >
+      <div className="size-10 flex justify-center items-center">
+        <category.icon size={36} className="text-gray-400" />
+      </div>
+      <p className="text-center text-sm">{category.label}</p>
+    </Box>
+  );
 };

@@ -25,6 +25,72 @@ export class ProductService {
     const products = await this.productModel.aggregate([
       { $sample: { size: parseInt(query.limit) ?? 10 } },
     ]);
+    if (!products) throw new NotFoundException('Products not found');
+    return products;
+  }
+
+  async searchProducts(query: any): Promise<Product[]> {
+    const { q: searchText } = query;
+    const products = await this.productModel.aggregate([
+      {
+        $match: {
+          $or: [
+            { title: { $regex: searchText, $options: 'i' } },
+            { description: { $regex: searchText, $options: 'i' } },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          titleMatch: {
+            $cond: {
+              if: {
+                $regexMatch: {
+                  input: '$title',
+                  regex: searchText,
+                  options: 'i',
+                },
+              },
+              then: 1,
+              else: 0,
+            },
+          },
+          titlePriority: {
+            $cond: {
+              if: {
+                $regexMatch: {
+                  input: '$title',
+                  regex: searchText,
+                  options: 'i',
+                },
+              },
+              then: {
+                $indexOfCP: [{ $toLower: '$title' }, searchText.toLowerCase()],
+              },
+              else: -1,
+            },
+          },
+        },
+      },
+
+      {
+        $sort: {
+          titleMatch: -1,
+          titlePriority: 1,
+          _id: 1,
+        },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+
+    if (!products.length) throw new NotFoundException('Products not found');
+    return products;
+  }
+
+  async getByCategories(category: string): Promise<Product[]> {
+    const products = await this.productModel.find({ category });
     if (!products) throw new Error('Products not found');
 
     return products;

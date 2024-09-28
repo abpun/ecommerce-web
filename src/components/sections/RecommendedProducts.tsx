@@ -20,7 +20,7 @@ export default function RecommendedProducts() {
         setLoading(true);
         let data;
         if (authService.isAuthenticated()) {
-          const user = await authService.getUser();
+          const user = authService.getUser();
           const id = user?.id;
           if (!id) return (data = []);
           data = await ApiService.get(PRODUCT.RECOMMEND(id));
@@ -50,7 +50,7 @@ export default function RecommendedProducts() {
         <Text>Recommendations</Text>
       </Box>
       <Text className="text-2xl font-semibold mt-3">Recommended Products:</Text>
-      <Grid itemsPerRow={4} className="mt-4">
+      <Grid itemsPerRow={4} className="mt-5">
         {products.map((product: any) => (
           <Product key={product.id} product={product} />
         ))}

@@ -7,6 +7,8 @@ import useCartStore from '@/lib/cartService';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
+import authService from '@/lib/authService';
+import { toast } from 'sonner';
 
 export default function CartDetails() {
   const router = useRouter();
@@ -35,7 +37,16 @@ export default function CartDetails() {
 
         <Separator className="my-4" />
 
-        <Button className="self-end" onClick={() => router.push('/checkout')}>
+        <Button
+          className="self-end"
+          onClick={() => {
+            if (authService.isAuthenticated()) {
+              router.push('/checkout');
+            } else {
+              toast.error('Please login to proceed.');
+            }
+          }}
+        >
           Proceed to Checkout
         </Button>
       </Box>

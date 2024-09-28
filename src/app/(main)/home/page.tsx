@@ -9,7 +9,7 @@ import RecommendedProducts from '@/components/sections/RecommendedProducts';
 export default async function Home() {
   try {
     const query = {
-      limit: 10,
+      limit: 12,
     };
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${PRODUCT.GET(query)}`;
     const response = await fetch(url, {
@@ -20,7 +20,7 @@ export default async function Home() {
     const products = await response.json();
 
     return (
-      <Container className="mt-2">
+      <Container className="mt-2 mb-8">
         <RecommendedProducts />
         <ProductsByCategories />
         <Text className="text-2xl font-semibold">Our Products:</Text>
