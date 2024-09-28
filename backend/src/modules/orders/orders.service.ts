@@ -2,12 +2,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model, ObjectId } from 'mongoose';
 import { Order } from './orders.schema';
+import { UserProductService } from '../user_product/user_product.service';
 
 @Injectable()
 export class OrderService {
-  constructor(@InjectModel('Order') private orderModel: Model<Order>) {}
+  constructor(
+    @InjectModel('Order') private orderModel: Model<Order>,
+    private userProductService: UserProductService,
+  ) {}
 
-  async getOrderById(id: ObjectId) {}
+  async getOrderByUserId(id: any) {
+    const order = await this.orderModel.find({ userId: id });
+    if (!order) throw new NotFoundException('Order not found');
+    return order;
+  }
 
   async getOrdersByPagination(query: any) {
     const { limit, page } = query;
@@ -48,6 +56,14 @@ export class OrderService {
     }, 0);
 
     const orderName = `ECOM_${Date.now()}`;
+
+    for (const item of data.cartItems) {
+      await this.userProductService.addInteraction(
+        data.userId,
+        item.productId,
+        'purchase',
+      );
+    }
 
     return await this.orderModel.create({
       ...data,

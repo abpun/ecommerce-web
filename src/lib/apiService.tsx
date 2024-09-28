@@ -14,10 +14,10 @@ class ApiService {
       const response = await fetch(`${BASE_API_URL}${url}`, {
         method,
         headers: {
-          'Content-Type': 'application/json',
           ...(headers || {}),
+          ...(body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
         },
-        body: body ? JSON.stringify(body) : undefined,
+        body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
       });
 
       return await response.json();

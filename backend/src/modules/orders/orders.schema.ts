@@ -5,7 +5,7 @@ interface OrderedItem {
   quantity: number;
 }
 
-export interface Order extends Document {
+export interface Order {
   name: string;
   address: string;
   phone: string;

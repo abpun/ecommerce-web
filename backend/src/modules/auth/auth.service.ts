@@ -4,6 +4,7 @@ import {
   HttpException,
   UnauthorizedException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
@@ -103,8 +104,48 @@ export class AuthService {
     });
 
     return {
+      status: 200,
       access_token: token,
       user: payload,
     };
+  }
+
+  async adminLogin(loginUserDto: LoginUserDto): Promise<object> {
+    const { email, password } = loginUserDto;
+    let user: User | null;
+    try {
+      user = await this.userModel.findOne({ email }).populate('role').exec();
+      if (!user) {
+        throw new NotFoundException('User or email not found');
+      }
+
+      // console.log(user);
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log(isPasswordValid);
+      if (!isPasswordValid || user.role?.name !== 'admin') {
+        throw new UnauthorizedException('Invalid email or password');
+      }
+
+      const payload = {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role?.name,
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+
+      return {
+        status: 200,
+        access_token: token,
+        user: payload,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Error checking for existing user',
+      );
+    }
   }
 }

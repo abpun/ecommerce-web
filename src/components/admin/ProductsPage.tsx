@@ -2,12 +2,45 @@
 import { PRODUCT } from '@/constants/endpoints';
 import ApiService from '@/lib/apiService';
 import React, { useState, useEffect } from 'react';
+import { Button } from '../ui/button';
+import { Drawer, Modal } from 'antd';
+import ProductForm from './AddProduct';
+import { toast } from 'sonner';
 
 const ProductsPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [activeId, setActiveId] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+
+  const handleOk = async () => {
+    try {
+      const data = await ApiService.delete(PRODUCT.DELETE(activeId));
+      if (data) toast.success('Product deleted successfully');
+      setRefresh(prev => prev + 1);
+    } catch (error) {
+      toast.error('Error deleting product');
+    } finally {
+      setIsModalOpen(false);
+      setActiveId('');
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -23,7 +56,7 @@ const ProductsPage: React.FC = () => {
     };
 
     fetchProducts();
-  }, [page, limit]);
+  }, [page, limit, refresh]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -31,24 +64,32 @@ const ProductsPage: React.FC = () => {
     }
   };
 
+  const handleDelete = (id: string) => {
+    setIsModalOpen(true);
+    setActiveId(id);
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold">Manage Products</h2>
       <div className="mt-4 min-h-[620px]">
-        <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4">Add New Product</button>
+        <Button onClick={showDrawer}>Add Product</Button>
+        <Drawer size="large" title="Add Product Form" onClose={onClose} open={open} className="w-[600px]">
+          <ProductForm onClose={onClose} setRefresh={setRefresh} />
+        </Drawer>
 
-        <table className="min-w-full bg-white border border-gray-300">
+        <table className="min-w-full bg-white border border-gray-300 mt-5">
           <thead>
             <tr>
-              <th className="border px-4 py-2 text-left w-[200px]">ID</th>
-              <th className="border px-4 py-2 text-left">Name</th>
-              <th className="border px-4 py-2 text-left">Price</th>
-              <th className="border px-4 py-2 text-left">Stock</th>
+              <th className="border px-4 py-2 text-left w-[240px]">ID</th>
+              <th className="border px-4 py-2 text-left w-[440px]">Name</th>
+              <th className="border px-4 py-2 text-left w-[180px]">Price</th>
+              <th className="border px-4 py-2 text-left w-[120px]">Stock</th>
               <th className="border px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {products.length === 0 ? (
+            {!products || products.length === 0 ? (
               <tr>
                 <td colSpan={5} className="border px-4 py-2 text-center">
                   No products found.
@@ -65,7 +106,15 @@ const ProductsPage: React.FC = () => {
                     <button className="bg-yellow-500 text-white px-2 pb-0.5 rounded hover:bg-yellow-600 mr-2">
                       Edit
                     </button>
-                    <button className="bg-red-500 text-white px-2 pb-0.5 rounded hover:bg-red-600">Delete</button>
+                    <button
+                      className="bg-red-500 text-white px-2 pb-0.5 rounded hover:bg-red-600"
+                      onClick={() => handleDelete(product._id)}
+                    >
+                      Delete
+                    </button>
+                    <Modal title="Confirm delete" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                      <p>Are you sure you want to delete</p>
+                    </Modal>
                   </td>
                 </tr>
               ))

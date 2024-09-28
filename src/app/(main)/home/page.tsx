@@ -26,7 +26,7 @@ export default async function Home() {
         <Text className="text-2xl font-semibold">Our Products:</Text>
         <Grid itemsPerRow={4} className="mt-4">
           {products.map((product: any) => (
-            <Product key={product.id} product={product} />
+            <Product key={product._id} product={product} />
           ))}
         </Grid>
       </Container>

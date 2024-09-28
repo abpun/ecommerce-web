@@ -20,6 +20,7 @@ export const PRODUCT = {
   RECOMMEND: (id: string) => `/products/recommend/${id}`,
   SEARCH: (search: string) => `/products/search?q=${search}`,
   GET_BY_CATEGORY: (category: string) => `/products/category/${category}`,
+  DELETE: (id: string) => `/products/${id}`,
 };
 
 export const PRODUCT_USER = {
@@ -41,9 +42,20 @@ export const ORDER = {
     return `/orders/pagination?${queryString}`;
   },
   UPDATE: (id: string) => `/orders/${id}`,
+  GET_BY_USER: (id: string) => `/orders/${id}`,
 };
 
 export const PAYMENT = {
   CREATE: '/payment',
   UPDATE: (id: string) => `/payment/${id}`,
+};
+
+export const USER = {
+  GET_PAGINATION: (query?: Record<string, any>) => {
+    if (!query || Object.keys(query).length === 0) {
+      return '/users/pagination';
+    }
+    const queryString = objectToQueryString(query);
+    return `/users/pagination?${queryString}`;
+  },
 };

@@ -14,7 +14,7 @@ const Orders: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const response = await ApiService.get(ORDER.GET_PAGINATION({ limit, page }));
-        console.log(response);
+
         setOrders(response.data);
         setPage(response.currentPage);
         setTotalPages(response.totalPages);
@@ -48,15 +48,15 @@ const Orders: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.length === 0 ? (
+            {!orders || orders.length === 0 ? (
               <tr>
                 <td colSpan={5} className="border px-4 py-2 text-center">
-                  No products found.
+                  No orders found.
                 </td>
               </tr>
             ) : (
               orders.map((order: any) => (
-                <tr key={order.id}>
+                <tr key={order._id}>
                   <td className="border px-4 py-2">{order._id}</td>
                   <td className="border px-4 py-2">{order.userId?.name || order.userId._id}</td>
                   <td className="border px-4 py-2">{order.payment_method}</td>

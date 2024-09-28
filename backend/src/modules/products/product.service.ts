@@ -5,6 +5,9 @@ import { Model } from 'mongoose';
 import { GetProductsQueryDto } from './product.dto';
 import { HttpService } from '@nestjs/axios';
 import { UserProduct } from '../user_product/user_product.model';
+import { UploadService } from 'src/services/upload';
+import { v2 as cloudinary } from 'cloudinary';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ProductService {
@@ -14,7 +17,15 @@ export class ProductService {
     @InjectModel('UserProduct')
     private readonly interactionModel: Model<UserProduct>,
     private readonly httpService: HttpService,
-  ) {}
+    private readonly uploadService: UploadService,
+    private readonly configService: ConfigService,
+  ) {
+    cloudinary.config({
+      cloud_name: this.configService.get<string>('CLOUDINARY_CLOUD_NAME'),
+      api_key: this.configService.get<string>('CLOUDINARY_API_KEY'),
+      api_secret: this.configService.get<string>('CLOUDINARY_API_SECRET'),
+    });
+  }
 
   async getFromApi() {
     const response = await this.httpService.get(this.apiUrl).toPromise();
@@ -132,10 +143,42 @@ export class ProductService {
     return product;
   }
 
-  async addProduct(product: Product): Promise<Product> {
-    const res = await this.productModel.create(product);
-    if (!res) throw new Error('Product not added');
-    return;
+  async addProduct(productData: Product): Promise<Product> {
+    try {
+      let imageUrls: string[] = [];
+
+      if (productData.images && productData.images.length > 0) {
+        imageUrls = await Promise.all(
+          productData.images.map(async (file) => {
+            const uploadedImageUrl = await this.uploadService.uploadFile(file);
+            return uploadedImageUrl;
+          }),
+        );
+        productData.images = imageUrls;
+      }
+
+      productData.thumbnail = imageUrls[0] || '';
+      productData.returnPolicy = '30 days';
+      productData.brand = 'default brand';
+      productData.reviews = [];
+      productData.availabilityStatus =
+        productData.stock > 0 ? 'In Stock' : 'Out of Stock';
+      productData.rating = 0;
+
+      const createdProduct = await this.productModel.create(productData);
+      if (!createdProduct) throw new Error('Product not added');
+
+      return createdProduct;
+    } catch (error) {
+      console.log(error);
+      throw new Error(`Error adding product: ${error.message}`);
+    }
+  }
+
+  async deleteProduct(id: string): Promise<Product> {
+    const deletedProduct = await this.productModel.findByIdAndDelete(id);
+    if (!deletedProduct) throw new Error('Product not deleted');
+    return deletedProduct;
   }
 
   async addManyProducts(products: Product[]): Promise<Product[]> {
@@ -166,9 +209,12 @@ export class ProductService {
       .populate('productId')
       .exec();
 
-    const userProducts = interactions.map(
-      (interaction) => interaction.productId,
-    );
+    const userProducts = interactions.map((interaction) => {
+      if (!interaction.productId) {
+        throw new NotFoundException('Product not found');
+      }
+      return interaction.productId;
+    });
 
     const allProducts = await this.productModel.find().exec();
 

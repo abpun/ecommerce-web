@@ -16,6 +16,7 @@ export class AuthController {
 
   @Post('signup')
   async register(@Body() body: any) {
+    // console.log(body);
     const requiredFields = ['name', 'email', 'password'];
     const missingFields = requiredFields.filter(
       (field) => !body.hasOwnProperty(field),
@@ -33,6 +34,7 @@ export class AuthController {
     createUserDto.password = body.password;
 
     const errors = validateSync(createUserDto);
+    console.log(errors);
     if (errors.length > 0) {
       const parsedErrors = errors.reduce((acc, err) => {
         acc[err.property] = Object.values(err.constraints)[0];
@@ -64,5 +66,19 @@ export class AuthController {
       );
     }
     return this.authService.login(body);
+  }
+
+  @Post('adminlogin')
+  async adminLogin(@Body() body: any) {
+    const requiredFields = ['email', 'password'];
+    const missingFields = requiredFields.filter(
+      (field) => !body.hasOwnProperty(field),
+    );
+    if (missingFields.length > 0) {
+      throw new BadRequestException(
+        `Missing required fields: ${missingFields.join(', ')}`,
+      );
+    }
+    return this.authService.adminLogin(body);
   }
 }

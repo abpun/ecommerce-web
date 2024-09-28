@@ -15,7 +15,7 @@ export interface Dimension {
   depth: number;
 }
 
-export interface Product extends Document {
+export interface Product {
   id: number;
   title: string;
   description: string;

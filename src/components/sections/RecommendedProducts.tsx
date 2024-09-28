@@ -41,7 +41,7 @@ export default function RecommendedProducts() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
-  if (products.length === 0) return <></>;
+  if (!products || products.length === 0) return <></>;
 
   return (
     <>
@@ -52,7 +52,7 @@ export default function RecommendedProducts() {
       <Text className="text-2xl font-semibold mt-3">Recommended Products:</Text>
       <Grid itemsPerRow={4} className="mt-5">
         {products.map((product: any) => (
-          <Product key={product.id} product={product} />
+          <Product key={product._id} product={product} />
         ))}
       </Grid>
       <Separator className="my-10 w-full h-[1px] bg-gray-300" />

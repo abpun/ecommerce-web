@@ -1,16 +1,20 @@
 import { Request } from 'express';
 import { ProductService } from './product.service';
 import { Product as ProductType } from './product.interface';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { GetProductsQueryDto } from './product.dto';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
   Post,
   Query,
   Req,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 
 @Controller('products')
@@ -48,10 +52,12 @@ export class ProductsController {
   async addProductDb() {
     try {
       const data = await this.productService.getFromApi();
-      // this.productService.addManyProducts(data.products);
-      const c = this.getUniqueCategoriesCount(data.products);
+      this.productService.addManyProducts(data.products);
 
-      return c;
+      return {
+        message: 'Products added successfully',
+        data: data.products,
+      };
     } catch (error) {
       console.log(error);
     }
@@ -101,10 +107,27 @@ export class ProductsController {
   }
 
   @Post()
+  @UseInterceptors(FilesInterceptor('images'))
   async createProduct(
-    @Body() createProductDto: ProductType,
-  ): Promise<ProductType> {
-    return this.productService.addProduct(createProductDto);
+    @Body() body: any,
+    @UploadedFiles() files: Express.Multer.File[],
+  ): Promise<any> {
+    const productData = {
+      ...body,
+      images: files,
+    };
+    const product = await this.productService.addProduct(productData);
+    return {
+      message: 'Product created successfully',
+      data: product,
+    };
+  }
+
+  @Delete(':id')
+  async deleteProduct(@Param('id') id: string): Promise<ProductType> {
+    const product = await this.productService.deleteProduct(id);
+    if (!product) throw new NotFoundException('Product not found');
+    return product;
   }
 
   @Post('bulk')

@@ -30,8 +30,6 @@ export default function Navbar() {
   const [isMounted, setIsMounted] = React.useState(false);
   const [isFocusing, setIsFocusing] = React.useState<boolean>(false);
 
-  console.log(results);
-
   React.useEffect(() => {
     if (!isMounted || searchText === '') return;
     const fetchSearch = async () => {

@@ -11,6 +11,7 @@ import { PurchaseModule } from './modules/purchases/purchase.module';
 import { UserProductModule } from './modules/user_product/user_product.module';
 import { OrderModule } from './modules/orders/orders.module';
 import { PaymentModule } from './modules/payments/payment.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PaymentModule } from './modules/payments/payment.module';
     AuthModule,
     RoleModule,
     OrderModule,
+    UsersModule,
     ReviewModule,
     PaymentModule,
     PurchaseModule,

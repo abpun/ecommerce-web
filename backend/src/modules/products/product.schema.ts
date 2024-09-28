@@ -9,19 +9,18 @@ const ReviewSchema = new Schema({
 });
 
 export const ProductSchema = new Schema({
-  id: { type: Number, required: true, unique: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
   category: { type: String, required: true },
   price: { type: Number, required: true },
   discountPercentage: { type: Number, required: true },
-  rating: { type: Number, required: true },
+  rating: { type: Number, default: 0 },
   stock: { type: Number, required: true },
-  tags: { type: [String], required: true },
+  tags: { type: [String] },
   brand: { type: String },
   availabilityStatus: { type: String, required: true },
-  reviews: { type: [ReviewSchema], required: true },
-  returnPolicy: { type: String, required: true },
+  reviews: { type: [ReviewSchema], default: [] },
+  returnPolicy: { type: String, default: '30 days' },
   images: { type: [String], required: true },
   thumbnail: { type: String, required: true },
 });

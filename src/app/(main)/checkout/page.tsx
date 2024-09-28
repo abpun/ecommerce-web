@@ -107,6 +107,7 @@ export default function page() {
         }
         cartStore.clearCart();
         cartStore.calculateTotal();
+        form.reset();
       }
     } catch (error) {
       toast.error('Failed to checkout');
