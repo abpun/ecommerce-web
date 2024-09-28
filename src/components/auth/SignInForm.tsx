@@ -50,6 +50,7 @@ export default function SignInForm() {
       }
     } catch (error) {
       console.log('hello', error);
+      toast.error("Credentials don't match");
     } finally {
       setLoading(false);
     }

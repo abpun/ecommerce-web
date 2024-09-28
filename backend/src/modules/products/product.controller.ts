@@ -22,10 +22,7 @@ export class ProductsController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  async getAllProducts(
-    @Query() query: GetProductsQueryDto,
-    @Req() req: Request,
-  ): Promise<ProductType[]> {
+  async getAllProducts(@Query() query: GetProductsQueryDto, @Req() req: Request): Promise<ProductType[]> {
     console.log(req.user);
     return this.productService.fetchProducts(query);
   }
@@ -63,10 +60,10 @@ export class ProductsController {
     }
   }
 
-  getUniqueCategoriesCount = (products) => {
+  getUniqueCategoriesCount = products => {
     const uniqueCategories = [];
 
-    products.forEach((product) => {
+    products.forEach(product => {
       if (!uniqueCategories.includes(product.category)) {
         uniqueCategories.push(product.category);
       }
@@ -101,23 +98,20 @@ export class ProductsController {
   @Get(':id')
   async getProductById(@Param('id') id: string): Promise<ProductType> {
     const product = await this.productService.findProductById(id);
-    if (!product)
-      throw new NotFoundException(`Product with ID ${id} not found`);
+    if (!product) throw new NotFoundException(`Product with ID ${id} not found`);
     return product;
   }
 
   @Post()
   @UseInterceptors(FilesInterceptor('images'))
-  async createProduct(
-    @Body() body: any,
-    @UploadedFiles() files: Express.Multer.File[],
-  ): Promise<any> {
+  async createProduct(@Body() body: any, @UploadedFiles() files: Express.Multer.File[]): Promise<any> {
     const productData = {
       ...body,
       images: files,
     };
     const product = await this.productService.addProduct(productData);
     return {
+      status: 201,
       message: 'Product created successfully',
       data: product,
     };

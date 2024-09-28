@@ -48,11 +48,11 @@ export default function Layout({
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex bg-gray-100">
       <AdminSidebar />
-      <div className="flex-1">
+      <div className="w-full">
         <AdminHeader />
-        <div className="p-6">{children}</div>
+        <div className="p-6 h-[90vh] overflow-y-scroll">{children}</div>
       </div>
     </div>
   );

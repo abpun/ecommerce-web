@@ -57,7 +57,7 @@ export default function Layout({
           </Box>
         </Box>
 
-        <Box className="w-full justify-start h-[40vh] items-start gap-12 mt-12 px-20">
+        <Box className="w-full justify-start items-start gap-12 mt-12 px-20">
           <Box className="w-[200px] justify-start">
             <ul className="space-y-8">
               {MENUS.map(menu => (
