@@ -7,17 +7,24 @@ import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import ApiService from '@/lib/apiService';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-type ProductFormValues = {
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  discountPercentage: number;
-  stock: number;
-  tags: string[];
-  images: File[];
-};
+const productSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(100, 'Title must be 100 characters or less'),
+  description: z.string().min(10, 'Description should be at least 10 characters long'),
+  category: z.string().min(1, 'Category is required'),
+  price: z.preprocess(val => parseFloat(val as string), z.number().min(10, 'Price must be at least 10')),
+  discountPercentage: z.preprocess(
+    val => parseFloat(val as string),
+    z.number().min(0).max(100, 'Discount percentage must be between 0 and 100')
+  ),
+  stock: z.preprocess(val => parseInt(val as string, 10), z.number().min(1, 'Stock must be at least 1')),
+  tags: z.array(z.string()).optional(),
+  images: z.array(z.string()).optional(),
+});
+
+type ProductFormValues = z.infer<typeof productSchema>;
 
 interface ProductFormProps {
   onClose: () => void;
@@ -27,6 +34,7 @@ interface ProductFormProps {
 
 const ProductForm: React.FC<ProductFormProps> = ({ onClose, setRefresh, productId }) => {
   const form = useForm<ProductFormValues>({
+    resolver: zodResolver(productSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -61,6 +69,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, setRefresh, productI
   };
 
   const onSubmit = async (data: ProductFormValues) => {
+    if (imageFiles.length === 0) {
+      form.setError('images', { message: 'select one image' });
+      return;
+    } else {
+      form.clearErrors();
+    }
+
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('description', data.description);
@@ -208,6 +223,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, setRefresh, productI
                 </div>
               ))}
             </div>
+          )}
+          {form.formState?.errors?.images && (
+            <p className="text-sm text-red-500">{form.formState.errors.images.message}</p>
           )}
         </FormItem>
 

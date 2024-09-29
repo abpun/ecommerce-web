@@ -18,7 +18,7 @@ export class ProductService {
     private readonly interactionModel: Model<UserProduct>,
     private readonly httpService: HttpService,
     private readonly uploadService: UploadService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     cloudinary.config({
       cloud_name: this.configService.get<string>('CLOUDINARY_CLOUD_NAME'),
@@ -33,9 +33,7 @@ export class ProductService {
   }
 
   async fetchProducts(query: GetProductsQueryDto): Promise<Product[]> {
-    const products = await this.productModel.aggregate([
-      { $sample: { size: parseInt(query.limit) ?? 10 } },
-    ]);
+    const products = await this.productModel.aggregate([{ $sample: { size: parseInt(query.limit) ?? 10 } }]);
     if (!products) throw new NotFoundException('Products not found');
     return products;
   }
@@ -134,10 +132,7 @@ export class ProductService {
     return products;
   }
 
-  async findProductById(
-    id: string,
-    projection: string[] = [],
-  ): Promise<Product | null> {
+  async findProductById(id: string, projection: string[] = []): Promise<Product | null> {
     const product = await this.productModel.findById(id, projection);
     if (!product) throw new NotFoundException('Product not found');
     return product;
@@ -149,10 +144,10 @@ export class ProductService {
 
       if (productData.images && productData.images.length > 0) {
         imageUrls = await Promise.all(
-          productData.images.map(async (file) => {
+          productData.images.map(async file => {
             const uploadedImageUrl = await this.uploadService.uploadFile(file);
             return uploadedImageUrl;
-          }),
+          })
         );
         productData.images = imageUrls;
       }
@@ -161,8 +156,7 @@ export class ProductService {
       productData.returnPolicy = '30 days';
       productData.brand = 'default brand';
       productData.reviews = [];
-      productData.availabilityStatus =
-        productData.stock > 0 ? 'In Stock' : 'Out of Stock';
+      productData.availabilityStatus = productData.stock > 0 ? 'In Stock' : 'Out of Stock';
       productData.rating = 0;
 
       const createdProduct = await this.productModel.create(productData);
@@ -204,12 +198,12 @@ export class ProductService {
     const threshold = 0.3;
     const interactions = await this.interactionModel
       .find({ userId })
-      .sort({ score: -1, updatedAt: -1 })
+      .sort({ updatedAt: -1, score: -1 })
       .limit(10)
       .populate('productId')
       .exec();
 
-    const userProducts = interactions.map((interaction) => {
+    const userProducts = interactions.map(interaction => {
       if (!interaction.productId) {
         throw new NotFoundException('Product not found');
       }
@@ -218,7 +212,7 @@ export class ProductService {
 
     const allProducts = await this.productModel.find().exec();
 
-    const recommendedProducts = allProducts.filter((product) => {
+    const recommendedProducts = allProducts.filter(product => {
       const similarityScore = this.calculateSimilarity(userProducts, product);
       return similarityScore > threshold;
     });
@@ -242,24 +236,13 @@ export class ProductService {
     const tagStrength = 0.3;
     const priceStrength = 0.3;
 
-    userProducts.forEach((userProduct) => {
-      const categorySimilarity = this.calculateCategorySimilarity(
-        userProduct.category,
-        product.category,
-      );
-      const tagSimilarity = this.calculateTagSimilarity(
-        userProduct.tags,
-        product.tags,
-      );
-      const priceSimilarity = this.calculatePriceSimilarity(
-        userProduct.price,
-        product.price,
-      );
+    userProducts.forEach(userProduct => {
+      const categorySimilarity = this.calculateCategorySimilarity(userProduct.category, product.category);
+      const tagSimilarity = this.calculateTagSimilarity(userProduct.tags, product.tags);
+      const priceSimilarity = this.calculatePriceSimilarity(userProduct.price, product.price);
       if (categorySimilarity > 0 || tagSimilarity > 0 || priceSimilarity > 0) {
         totalSimilarity +=
-          categoryStrength * categorySimilarity +
-          tagStrength * tagSimilarity +
-          priceStrength * priceSimilarity;
+          categoryStrength * categorySimilarity + tagStrength * tagSimilarity + priceStrength * priceSimilarity;
         count++;
       }
     });
@@ -272,7 +255,7 @@ export class ProductService {
   }
 
   calculateTagSimilarity(tags1, tags2) {
-    const intersection = tags1.filter((tag) => tags2.includes(tag)).length;
+    const intersection = tags1.filter(tag => tags2.includes(tag)).length;
     const union = new Set([...tags1, ...tags2]).size;
     return intersection / union;
   }

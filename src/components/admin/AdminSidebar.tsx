@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import { usePathname } from 'next/navigation';
 import { Separator } from '@radix-ui/react-separator';
 import { cn } from '@/lib/utils';
+import authService from '@/lib/authService';
 
 const AdminSidebar: React.FC = () => {
   const params = usePathname();
@@ -48,7 +49,9 @@ const AdminSidebar: React.FC = () => {
           </li>
         ))}
         <li className="mx-2 mt-4">
-          <Button size="sm">Logout</Button>
+          <Button size="sm" onClick={() => authService.logout()}>
+            Logout
+          </Button>
         </li>
       </ul>
     </div>
