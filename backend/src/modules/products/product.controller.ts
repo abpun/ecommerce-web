@@ -23,7 +23,7 @@ export class ProductsController {
 
   @Get()
   async getAllProducts(@Query() query: GetProductsQueryDto, @Req() req: Request): Promise<ProductType[]> {
-    console.log(req.user);
+    // console.log(req.user);
     return this.productService.fetchProducts(query);
   }
 
@@ -56,7 +56,7 @@ export class ProductsController {
         data: data.products,
       };
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 

@@ -7,7 +7,7 @@ export class UserController {
 
   @Get('pagination')
   async getUsersByPagination(@Query() query: any) {
-    console.log(query);
+    // console.log(query);
     return this.userService.fetchUsersByPagination(query);
   }
 }

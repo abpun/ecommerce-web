@@ -164,7 +164,7 @@ export class ProductService {
 
       return createdProduct;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       throw new Error(`Error adding product: ${error.message}`);
     }
   }
@@ -199,7 +199,7 @@ export class ProductService {
     const interactions = await this.interactionModel
       .find({ userId })
       .sort({ updatedAt: -1, score: -1 })
-      .limit(10)
+      .limit(4)
       .populate('productId')
       .exec();
 
@@ -220,6 +220,7 @@ export class ProductService {
     return this.getRandomProducts(recommendedProducts, 4);
   }
 
+  // fisher yates algorithm
   getRandomProducts(products: any[], count: number) {
     for (let i = products.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -250,16 +251,19 @@ export class ProductService {
     return totalSimilarity;
   }
 
+  // Normalized difference
   calculateCategorySimilarity(category1, category2) {
     return category1 === category2 ? 1 : 0;
   }
 
+  // jaccard similarity
   calculateTagSimilarity(tags1, tags2) {
     const intersection = tags1.filter(tag => tags2.includes(tag)).length;
     const union = new Set([...tags1, ...tags2]).size;
     return intersection / union;
   }
 
+  // binary comparison
   calculatePriceSimilarity(price1, price2) {
     const maxPrice = Math.max(price1, price2);
     const minPrice = Math.min(price1, price2);

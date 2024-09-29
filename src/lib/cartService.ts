@@ -48,7 +48,7 @@ const useCartStore = create<CartState>((set, get) => {
       } else {
         const newItem: CartItem = {
           ...item,
-          quantity: 1,
+          quantity: item?.quantity || 1,
           subtotal: parseInt((item.price * 1 * 100).toFixed(0)),
         };
         set({ cart: [...cart, newItem] });

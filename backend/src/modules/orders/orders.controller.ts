@@ -7,7 +7,7 @@ export class OrderController {
 
   @Get('pagination')
   async getOrdersByPagination(@Query() query: any) {
-    console.log(query);
+    // console.log(query);
     return this.orderService.getOrdersByPagination(query);
   }
 

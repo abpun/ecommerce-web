@@ -18,7 +18,7 @@ import { Role } from '../role/role.interface';
 export class AuthService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
-    @InjectModel('Role') private roleModel: Model<Role>,
+    @InjectModel('Role') private roleModel: Model<Role>
   ) {}
 
   async validateUser(id: ObjectId): Promise<any> {
@@ -41,7 +41,7 @@ export class AuthService {
             email: 'Email already exists',
           },
         },
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
 
@@ -65,10 +65,8 @@ export class AuthService {
         message: 'User registerd',
       };
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Error saving user to the database',
-      );
+      // console.log(error);
+      throw new InternalServerErrorException('Error saving user to the database');
     }
   }
 
@@ -79,9 +77,7 @@ export class AuthService {
     try {
       user = await this.userModel.findOne({ email }).populate('role').exec();
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error checking for existing user',
-      );
+      throw new InternalServerErrorException('Error checking for existing user');
     }
 
     if (!user) {
@@ -121,7 +117,7 @@ export class AuthService {
 
       // console.log(user);
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      console.log(isPasswordValid);
+      // console.log(isPasswordValid);
       if (!isPasswordValid || user.role?.name !== 'admin') {
         throw new UnauthorizedException('Invalid email or password');
       }
@@ -142,10 +138,8 @@ export class AuthService {
         user: payload,
       };
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Error checking for existing user',
-      );
+      // console.log(error);
+      throw new InternalServerErrorException('Error checking for existing user');
     }
   }
 }

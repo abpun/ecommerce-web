@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './auth.dto';
 import { validateSync } from 'class-validator';
@@ -18,14 +11,10 @@ export class AuthController {
   async register(@Body() body: any) {
     // console.log(body);
     const requiredFields = ['name', 'email', 'password'];
-    const missingFields = requiredFields.filter(
-      (field) => !body.hasOwnProperty(field),
-    );
+    const missingFields = requiredFields.filter(field => !body.hasOwnProperty(field));
 
     if (missingFields.length > 0) {
-      throw new BadRequestException(
-        `Missing required fields: ${missingFields.join(', ')}`,
-      );
+      throw new BadRequestException(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
     const createUserDto = new CreateUserDto();
@@ -34,7 +23,7 @@ export class AuthController {
     createUserDto.password = body.password;
 
     const errors = validateSync(createUserDto);
-    console.log(errors);
+    // console.log(errors);
     if (errors.length > 0) {
       const parsedErrors = errors.reduce((acc, err) => {
         acc[err.property] = Object.values(err.constraints)[0];
@@ -47,7 +36,7 @@ export class AuthController {
           message: 'Validation failed',
           errors: parsedErrors,
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -57,13 +46,9 @@ export class AuthController {
   @Post('signin')
   async login(@Body() body: any) {
     const requiredFields = ['email', 'password'];
-    const missingFields = requiredFields.filter(
-      (field) => !body.hasOwnProperty(field),
-    );
+    const missingFields = requiredFields.filter(field => !body.hasOwnProperty(field));
     if (missingFields.length > 0) {
-      throw new BadRequestException(
-        `Missing required fields: ${missingFields.join(', ')}`,
-      );
+      throw new BadRequestException(`Missing required fields: ${missingFields.join(', ')}`);
     }
     return this.authService.login(body);
   }
@@ -71,13 +56,9 @@ export class AuthController {
   @Post('adminlogin')
   async adminLogin(@Body() body: any) {
     const requiredFields = ['email', 'password'];
-    const missingFields = requiredFields.filter(
-      (field) => !body.hasOwnProperty(field),
-    );
+    const missingFields = requiredFields.filter(field => !body.hasOwnProperty(field));
     if (missingFields.length > 0) {
-      throw new BadRequestException(
-        `Missing required fields: ${missingFields.join(', ')}`,
-      );
+      throw new BadRequestException(`Missing required fields: ${missingFields.join(', ')}`);
     }
     return this.authService.adminLogin(body);
   }

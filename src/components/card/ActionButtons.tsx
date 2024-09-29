@@ -34,6 +34,7 @@ export default function ActionButtons({ product }: any) {
   };
 
   const onSubmit = (data: any) => {
+    console.log(data.quantity);
     cartStore.addItem({
       id: product._id,
       thumbnail: product.thumbnail,
